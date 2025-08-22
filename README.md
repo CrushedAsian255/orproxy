@@ -70,7 +70,7 @@ Example: `openai/o3-mini$think.high`
 Any parameter that doesn't match quantization or reasoning options is treated as a provider slug.
 Provider slug are obtainable by clicking the clipboard icon next to the provider name on OpenRouter.
 
-Example: `openai/gpt-oss-120b$deepinfra/fp4`
+Example: `deepseek/deepseek-r1-0528$google-vertex`
 
 ### Combinations
 
