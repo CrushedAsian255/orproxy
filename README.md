@@ -6,6 +6,8 @@ A proxy for the OpenRouter API that allows deeper customisation from just the mo
 
 ORProxy is a lightweight Express.js server that acts as a proxy for the OpenRouter API. It allows you to extend model specifications with additional parameters like quantization options, reasoning settings, and provider preferences using extra information in the model name.
 
+Disclaimer: This project is not officially licenced, endorsed, or developed by OpenRouter or their team.
+
 ## Features
 
 - **Model Parameter Parsing**: Extend model names with special parameters using the `$` delimiter
