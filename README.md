@@ -64,6 +64,7 @@ Example: `moonshotai/kimi-k2$fp8`
 - `think` - Enable reasoning
 - `think.1000` - Enable reasoning with max 1000 tokens (Anthropic style)
 - `think.high` - Enable reasoning with high effort (OpenAI style)
+- `think.off` or `think.no` - Disable reasoning on models that reason by default
 
 Example: `openai/o3-mini$think.high`
 

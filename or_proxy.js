@@ -53,7 +53,9 @@ app.post("/v1/chat/completions", async (req, res) => {
                 // Thinking options
                 if (param.includes(".")) {
                     let thinking_option = param.split(".")[1];
-                    if (isNaN(thinking_option)) {
+                    if (["no", "off"].includes(thinking_option)) {
+                        modifiedBody["reasoning"] = { enabled: false };
+                    } else if (isNaN(thinking_option)) {
                         modifiedBody["reasoning"] = {
                             enabled: true,
                             effort: thinking_option,
