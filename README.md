@@ -67,6 +67,12 @@ Example: `moonshotai/kimi-k2$fp8`
 
 Example: `openai/o3-mini$think.high`
 
+### ZDR (Zero Data Retention)
+
+- `zdr`: Force request to be handled by ZDR provider 
+
+Example: `moonshotai/kimi-k2-0905$zdr`
+
 ### Provider Filtering
 
 Any parameter that doesn't match quantization or reasoning options is treated as a provider slug.

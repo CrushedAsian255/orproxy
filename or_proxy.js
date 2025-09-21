@@ -67,6 +67,12 @@ app.post("/v1/chat/completions", async (req, res) => {
                 } else {
                     modifiedBody["reasoning"] = { enabled: true };
                 }
+            } else if (param == "zdr") {
+                // Zero Data Retention endpoint requirement
+                if (!("provider" in modifiedBody)) {
+                    modifiedBody["provider"] = {};
+                }
+                modifiedBody["provider"]["zdr"] = true;
             } else {
                 // If nothing else matches, its a provider name
                 if (!("provider" in modifiedBody)) {
