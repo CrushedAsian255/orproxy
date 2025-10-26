@@ -70,9 +70,20 @@ Example: `openai/o3-mini$think.high`
 
 ### ZDR (Zero Data Retention)
 
-- `zdr`: Force request to be handled by ZDR provider 
+- `zdr`: Force request to be handled by ZDR provider
 
 Example: `moonshotai/kimi-k2-0905$zdr`
+
+### Cache Mode
+
+- `cache`: Add default cache mode (`last`)
+- `cache.<mode>`: Add caching using specified mode
+
+#### Modes
+
+- `last`: Add cache_control breakpoint to the latest message that supports caching
+
+Any unknown mode is ignored
 
 ### Provider Filtering
 

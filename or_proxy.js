@@ -5,6 +5,38 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+function applyCaching(messageArray, cacheMode) {
+    if (cacheMode == "last") {
+        for (let i = messageArray.length - 1; i >= 0; i--) {
+            if (typeof messageArray[i]["content"] == "string") {
+                messageArray[i]["content"] = [
+                    {
+                        type: "text",
+                        text: messageArray[i]["content"],
+                        cache_control: {
+                            type: "ephemeral",
+                        },
+                    },
+                ];
+                return;
+            } else if (Array.isArray(messageArray[i]["content"])) {
+                for (let j = messageArray[i]["content"].length; j >= 0; j--) {
+                    if (messageArray[i]["content"][j]["type"] == "text") {
+                        messageArray[i]["content"][j]["cache_control"] = {
+                            type: "ephemeral",
+                        };
+                        return;
+                    }
+                }
+            } else {
+                // Unknown message type
+            }
+        }
+    } else {
+        // Unknown cache mode, ignore
+    }
+}
+
 app.use(express.json({ limit: "10gb" }));
 app.use(
     express.urlencoded({
@@ -69,6 +101,11 @@ app.post("/v1/chat/completions", async (req, res) => {
                 } else {
                     modifiedBody["reasoning"] = { enabled: true };
                 }
+            } else if (param == "cache") {
+                const cacheMode = param.includes(".")
+                    ? param.split(".")[1]
+                    : "last"; // Set default caching mode to 'last'
+                applyCaching(modifiedBody["messages"], cacheMode);
             } else if (param == "zdr") {
                 // Zero Data Retention endpoint requirement
                 if (!("provider" in modifiedBody)) {
