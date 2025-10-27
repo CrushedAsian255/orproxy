@@ -4,7 +4,8 @@ A proxy for the OpenRouter API that allows deeper customisation from just the mo
 
 ## Overview
 
-ORProxy is a lightweight Express.js server that acts as a proxy for the OpenRouter API. It allows you to extend model specifications with additional parameters like quantization options, reasoning settings, and provider preferences using extra information in the model name.
+ORProxy is a lightweight Express.js server that acts as a proxy for the OpenRouter API.
+It allows you to provide model customisation with additional parameters using extra tags in the model name.
 
 Disclaimer: This project is not officially licenced, endorsed, or developed by OpenRouter or their team.
 
@@ -16,6 +17,7 @@ Disclaimer: This project is not officially licenced, endorsed, or developed by O
 - **Provider Filtering**: Restrict requests to specific providers
 - **Streaming Support**: Maintains streaming capabilities for real-time responses
 - **Usage Tracking**: Automatically includes usage information in responses
+- **Anthropic-style Cache Breakpoints**: Enable context caching for Anthropic models
 
 ## Usage
 
@@ -44,6 +46,8 @@ PORT=8080 node or_proxy.js
 # or 
 PORT=8080 bun or_proxy.js
 ```
+
+Docker and Docker Compose is also supported. 
 
 ## Parameters
 
@@ -76,14 +80,22 @@ Example: `moonshotai/kimi-k2-0905$zdr`
 
 ### Cache Mode
 
-- `cache`: Add default cache mode (`last`)
-- `cache.<mode>`: Add caching using specified mode
+Adds cache breakpoints to request (useful for Anthropic models)
+
+- `cache`: Use default cache mode (`last`)
+- `cache.<mode>`: Use specified cache mode
 
 #### Modes
 
+Currently, only one mode is supported.
+
 - `last`: Add cache_control breakpoint to the latest message that supports caching
 
-Any unknown mode is ignored
+If you would like to suggest a mode, feel free to open an Issue or a Pull Request.
+
+Any unknown mode is ignored (no caching will take place). 
+
+Example: `anthropic/claude-sonnet-4.5$cache`
 
 ### Provider Filtering
 
