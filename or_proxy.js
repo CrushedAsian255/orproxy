@@ -20,6 +20,9 @@ function applyCaching(messageArray, cacheMode) {
                 ];
                 return;
             } else if (Array.isArray(messageArray[i]["content"])) {
+                if(typeof messageArray[i]["content"].length != "number") {
+                    return; // not sure how this could happen but just to be safe
+                }
                 for (let j = messageArray[i]["content"].length; j >= 0; j--) {
                     if (messageArray[i]["content"][j]["type"] == "text") {
                         messageArray[i]["content"][j]["cache_control"] = {
