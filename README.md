@@ -17,7 +17,7 @@ Disclaimer: This project is not officially licenced, endorsed, or developed by O
 - **Provider Filtering**: Restrict requests to specific providers
 - **Streaming Support**: Maintains streaming capabilities for real-time responses
 - **Usage Tracking**: Automatically includes usage information in responses
-- **Anthropic-style Cache Breakpoints**: Enable context caching for Anthropic models
+- **Anthropic Cache Breakpoints**: Enable context caching for Anthropic models
 
 ## Usage
 
@@ -47,7 +47,7 @@ PORT=8080 node or_proxy.js
 PORT=8080 bun or_proxy.js
 ```
 
-Docker and Docker Compose is also supported. 
+Docker and Docker Compose is also supported.
 
 ## Parameters
 
@@ -82,18 +82,8 @@ Example: `moonshotai/kimi-k2-0905$zdr`
 
 Adds cache breakpoints to request (useful for Anthropic models)
 
-- `cache`: Use default cache mode (`last`)
-- `cache.<mode>`: Use specified cache mode
-
-#### Modes
-
-Currently, only one mode is supported.
-
-- `last`: Add cache_control breakpoint to the latest message that supports caching
-
-If you would like to suggest a mode, feel free to open an Issue or a Pull Request.
-
-Any unknown mode is ignored (no caching will take place). 
+- `cache`: Use default cache mode (5 minutes)
+- `cache`: Use default cache mode (1 hour)
 
 Example: `anthropic/claude-sonnet-4.5$cache`
 

@@ -5,38 +5,39 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-function applyCaching(messageArray, cacheMode) {
-    if (cacheMode == "last") {
-        for (let i = messageArray.length - 1; i >= 0; i--) {
-            if (typeof messageArray[i]["content"] == "string") {
-                messageArray[i]["content"] = [
-                    {
-                        type: "text",
-                        text: messageArray[i]["content"],
-                        cache_control: {
-                            type: "ephemeral",
-                        },
-                    },
-                ];
-                return;
-            } else if (Array.isArray(messageArray[i]["content"])) {
-                if(typeof messageArray[i]["content"].length != "number") {
-                    return; // not sure how this could happen but just to be safe
-                }
-                for (let j = messageArray[i]["content"].length; j >= 0; j--) {
-                    if (messageArray[i]["content"][j]["type"] == "text") {
-                        messageArray[i]["content"][j]["cache_control"] = {
-                            type: "ephemeral",
-                        };
-                        return;
-                    }
-                }
-            } else {
-                // Unknown message type
+function applyCaching(messageArray, ttl1h) {
+    for (let i = messageArray.length - 1; i >= 0; i--) {
+        if (typeof messageArray[i]["content"] == "string") {
+            messageArray[i]["content"] = [
+                {
+                    type: "text",
+                    text: messageArray[i]["content"],
+                    cache_control: ttl1h
+                        ? {
+                              type: "ephemeral",
+                              ttl: "1h",
+                          }
+                        : {
+                              type: "ephemeral",
+                          },
+                },
+            ];
+            return;
+        } else if (Array.isArray(messageArray[i]["content"])) {
+            if (typeof messageArray[i]["content"].length != "number") {
+                return; // not sure how this could happen but just to be safe
             }
+            for (let j = messageArray[i]["content"].length; j >= 0; j--) {
+                if (messageArray[i]["content"][j]["type"] == "text") {
+                    messageArray[i]["content"][j]["cache_control"] = {
+                        type: "ephemeral",
+                    };
+                    return;
+                }
+            }
+        } else {
+            // Unknown message type
         }
-    } else {
-        // Unknown cache mode, ignore
     }
 }
 
@@ -105,10 +106,9 @@ app.post("/v1/chat/completions", async (req, res) => {
                     modifiedBody["reasoning"] = { enabled: true };
                 }
             } else if (param == "cache") {
-                const cacheMode = param.includes(".")
-                    ? param.split(".")[1]
-                    : "last"; // Set default caching mode to 'last'
-                applyCaching(modifiedBody["messages"], cacheMode);
+                applyCaching(modifiedBody["messages"], false);
+            } else if (param == "cache1h") {
+                applyCaching(modifiedBody["messages"], true);
             } else if (param == "zdr") {
                 // Zero Data Retention endpoint requirement
                 if (!("provider" in modifiedBody)) {
@@ -151,13 +151,14 @@ app.post("/v1/chat/completions", async (req, res) => {
         });
         response.data.on("error", async (err) => {
             console.error("Stream error:", err);
-            res.status(500).send("Internal Server Error");
+            res.status(500).send(`Internal Server Error: ${err.message}`);
         });
     } catch (err) {
         console.error(err.message);
-        return res
-            .status(500)
-            .send({ error: "Internal Server Error", details: err.message });
+        return res.status(500).send({
+            error: `Internal Server Error: ${err.message}`,
+            details: err.message,
+        });
     }
 });
 
