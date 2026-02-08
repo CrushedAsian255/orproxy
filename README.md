@@ -83,9 +83,9 @@ Example: `moonshotai/kimi-k2-0905$zdr`
 Adds cache breakpoints to request (useful for Anthropic models)
 
 - `cache`: Use default cache mode (5 minutes)
-- `cache`: Use default cache mode (1 hour)
+- `cache1h`: Use extended cache mode (1 hour)
 
-Example: `anthropic/claude-sonnet-4.5$cache`
+Example: `anthropic/claude-sonnet-4.5$cache1h`
 
 ### Provider Filtering
 
