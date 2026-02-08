@@ -49,8 +49,8 @@ app.use(
         parameterLimit: 10000000,
     })
 );
-app.use("/v1/chat/completions", bodyParser.raw({ type: "application/json" }));
-app.post("/v1/chat/completions", async (req, res) => {
+app.use("/:loc/chat/completions", bodyParser.raw({ type: "application/json" }));
+app.post("/:loc/chat/completions", async (req, res) => {
     try {
         const requestBody = req.body;
         let modifiedBody = { ...requestBody };
@@ -161,21 +161,6 @@ app.post("/v1/chat/completions", async (req, res) => {
         });
     }
 });
-
-app.use(
-    "/v1",
-    createProxyMiddleware({
-        target: "https://www.openrouter.ai",
-        changeOrigin: true,
-        pathRewrite: (path, req) => {
-            return "api/" + path;
-        },
-        onError: (err, req, res) => {
-            console.error("Proxy error:", err);
-            res.status(502).json({ error: "Proxy request failed" });
-        },
-    })
-);
 
 app.listen(PORT, () => {
     console.log(`Proxy server running on port ${PORT}`);
