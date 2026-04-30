@@ -49,8 +49,8 @@ app.use(
         parameterLimit: 10000000,
     })
 );
-app.use("/v1/chat/completions", bodyParser.raw({ type: "application/json" }));
-app.post("/v1/chat/completions", async (req, res) => {
+app.use("/:loc/chat/completions", bodyParser.raw({ type: "application/json" }));
+app.post("/:loc/chat/completions", async (req, res) => {
     try {
         const requestBody = req.body;
         let modifiedBody = { ...requestBody };
@@ -115,15 +115,21 @@ app.post("/v1/chat/completions", async (req, res) => {
                     modifiedBody["provider"] = {};
                 }
                 modifiedBody["provider"]["zdr"] = true;
+                modifiedBody["provider"]["data_collection"] = "deny";
+            } else if (param == "strict") {
+                if (!("provider" in modifiedBody)) {
+                    modifiedBody["provider"] = {};
+                }
+                modifiedBody["provider"]["allow_fallbacks"] = false;
             } else {
                 // If nothing else matches, its a provider name
                 if (!("provider" in modifiedBody)) {
                     modifiedBody["provider"] = {};
                 }
-                if (!("only" in modifiedBody.provider)) {
-                    modifiedBody.provider["only"] = [];
+                if (!("order" in modifiedBody.provider)) {
+                    modifiedBody.provider["order"] = [];
                 }
-                modifiedBody.provider.only.push(param);
+                modifiedBody.provider.order.push(param);
             }
         }
         modifiedBody.model = slug;
@@ -155,6 +161,14 @@ app.post("/v1/chat/completions", async (req, res) => {
         });
     } catch (err) {
         console.error(err.message);
+        if (err.response) {
+            res.status(err.response.status);
+            Object.keys(err.response.headers).forEach((key) => {
+                res.setHeader(key, err.response.headers[key]);
+            });
+            err.response.data.pipe(res);
+            return;
+        }
         return res.status(500).send({
             error: `Internal Server Error: ${err.message}`,
             details: err.message,
@@ -163,12 +177,12 @@ app.post("/v1/chat/completions", async (req, res) => {
 });
 
 app.use(
-    "/v1",
+    "/:loc",
     createProxyMiddleware({
         target: "https://www.openrouter.ai",
         changeOrigin: true,
         pathRewrite: (path, req) => {
-            return "api/" + path;
+            return "api/v1" + path;
         },
         onError: (err, req, res) => {
             console.error("Proxy error:", err);
