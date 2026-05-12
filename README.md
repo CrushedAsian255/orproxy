@@ -87,6 +87,14 @@ Adds cache breakpoints to request (useful for Anthropic models)
 
 Example: `anthropic/claude-sonnet-4.5$cache1h`
 
+### Service tier
+
+Use service tier.
+
+- `tier.{tier}`
+
+Example: `openai/gpt-5.5$openai,tier.flex`
+
 ### Provider Filtering
 
 Any parameter that doesn't match quantization or reasoning options is treated as a provider slug.

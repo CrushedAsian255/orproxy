@@ -121,6 +121,8 @@ app.post("/:loc/chat/completions", async (req, res) => {
                     modifiedBody["provider"] = {};
                 }
                 modifiedBody["provider"]["allow_fallbacks"] = false;
+            } else if (param.startsWith("tier.")) {
+                modifiedBody["service_tier"] = param.split(".")[1];
             } else {
                 // If nothing else matches, its a provider name
                 if (!("provider" in modifiedBody)) {
